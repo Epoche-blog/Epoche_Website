@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: undefined,
+  site: 'https://epoche-website.pages.dev',
+  output: 'static',
 });
