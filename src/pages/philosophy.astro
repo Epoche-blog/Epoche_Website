@@ -1,20 +1,36 @@
 ---
-import '../styles/global.css';
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('posts')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
 ---
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Philosophy | Epoche</title>
-  </head>
-  <body>
-    <div class="page-shell">
-      <div class="page-note">
-        <h1>Philosophy</h1>
-        <p>This page is under construction. Your philosophy and design thinking will be published here soon.</p>
-        <div class="construction">Under Construction</div>
-        <a class="back-link" href="/">← Back to landing page</a>
+<Layout title="Philosophy | Epoché">
+  <div class="sub-header">
+    <a class="crumb" href="/">← Epoché</a>
+    <h1 class="sub-title">Philosophy</h1>
+    <span></span>
+  </div>
+  <div class="content-area">
+    <p>Writing on epoché as a practice — bracketing assumptions to look at process, tools, and work plainly.</p>
+
+    {posts.length > 0 ? (
+      <div class="post-list">
+        {posts.map((post) => (
+          <a class="post-entry" href={`/philosophy/${post.id}`}>
+            <time datetime={post.data.date.toISOString()}>
+              {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+            </time>
+            <div>
+              <div class="post-title">{post.data.title}</div>
+              <p class="excerpt">{post.data.excerpt}</p>
+            </div>
+          </a>
+        ))}
       </div>
-    </div>
-  </body>
-</html>
+    ) : (
+      <div class="construction-note">No posts yet. First one is coming soon.</div>
+    )}
+  </div>
+</Layout>

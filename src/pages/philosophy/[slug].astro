@@ -1,0 +1,31 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+<Layout title={`${post.data.title} | Epoché`} description={post.data.excerpt}>
+  <div class="sub-header">
+    <a class="crumb" href="/philosophy">← Philosophy</a>
+    <span></span>
+    <span></span>
+  </div>
+  <div class="content-area">
+    <h1 class="sub-title">{post.data.title}</h1>
+    <p class="post-meta">
+      {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+    </p>
+    <div class="post-body">
+      <Content />
+    </div>
+  </div>
+</Layout>

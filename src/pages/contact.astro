@@ -1,20 +1,14 @@
 ---
-import '../styles/global.css';
+import Layout from '../layouts/Layout.astro';
 ---
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Contact | Epoche</title>
-  </head>
-  <body>
-    <div class="page-shell">
-      <div class="page-note">
-        <h1>Contact</h1>
-        <p>This page is under construction. For now, all contact details will appear here once the site is ready.</p>
-        <div class="construction">Under Construction</div>
-        <a class="back-link" href="/">← Back to landing page</a>
-      </div>
-    </div>
-  </body>
-</html>
+<Layout title="Contact | Epoché">
+  <div class="sub-header">
+    <a class="crumb" href="/">← Epoché</a>
+    <h1 class="sub-title">Contact</h1>
+    <span></span>
+  </div>
+  <div class="content-area">
+    <p>Get in touch.</p>
+    <div class="construction-note">Contact details are coming soon.</div>
+  </div>
+</Layout>

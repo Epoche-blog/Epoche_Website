@@ -1,51 +1,33 @@
 ---
-import '../styles/global.css';
+import Layout from '../layouts/Layout.astro';
 ---
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Epoche — Blog & Portfolio</title>
-  </head>
-  <body>
-    <div class="page-shell">
-      <header>
-        <p>Epoche</p>
-        <h1>Blog & Portfolio</h1>
-        <p>Explore the site sections below. Each page is currently under construction.</p>
-      </header>
+<Layout title="Epoché">
+  <header class="masthead">
+    <h1 class="wordmark">Epoché</h1>
+    <p class="definition"><span class="term">epoché</span>, n. — the suspension of judgment; setting assumptions aside to look at something plainly.</p>
+  </header>
 
-      <main class="triangle-scene">
-        <div class="triangle-container" role="navigation" aria-label="Site sections">
-          <svg viewBox="0 0 100 100" class="triangle-svg" role="img" aria-label="Explore site sections">
-            <defs>
-              <radialGradient id="centerGlow" cx="50%" cy="60%" r="35%">
-                <stop offset="0%" stop-color="rgba(167, 185, 255, 0.42)" />
-                <stop offset="100%" stop-color="rgba(167, 185, 255, 0)" />
-              </radialGradient>
-            </defs>
-
-            <circle cx="50" cy="60" r="24" fill="url(#centerGlow)" />
-
-            <a href="/contact" aria-label="Contact section">
-              <path d="M50 6 L24 58 L76 58 Z" class="triangle-piece" />
-            </a>
-            <a href="/portfolio" aria-label="Portfolio section">
-              <path d="M24 58 L6 96 L50 96 Z" class="triangle-piece" />
-            </a>
-            <a href="/philosophy" aria-label="Philosophy section">
-              <path d="M76 58 L50 96 L94 96 Z" class="triangle-piece" />
-            </a>
-
-            <path d="M50 6 L6 96 L94 96 Z" class="triangle-outline" />
-            <path d="M50 6 L50 96 M24 58 L76 58" class="triangle-divider" />
-
-            <text x="50" y="34" class="triangle-label">Contact</text>
-            <text x="25" y="80" class="triangle-label">Portfolio</text>
-            <text x="75" y="80" class="triangle-label">Philosophy</text>
-          </svg>
-        </div>
-      </main>
-    </div>
-  </body>
-</html>
+  <nav class="index" aria-label="Site sections">
+    <a class="index-field" href="/philosophy">
+      <div>
+        <div class="label">Philosophy</div>
+        <p class="desc">Writing on epoché, process, and building things well.</p>
+      </div>
+      <span class="enter">Read</span>
+    </a>
+    <a class="index-field" href="/portfolio">
+      <div>
+        <div class="label">Portfolio</div>
+        <p class="desc">Manufacturing systems, automation, and builds.</p>
+      </div>
+      <span class="enter">View</span>
+    </a>
+    <a class="index-field" href="/contact">
+      <div>
+        <div class="label">Contact</div>
+        <p class="desc">Get in touch.</p>
+      </div>
+      <span class="enter">Get in touch</span>
+    </a>
+  </nav>
+</Layout>
