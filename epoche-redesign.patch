@@ -1,0 +1,707 @@
+diff --git a/astro.config.mjs b/astro.config.mjs
+index 993daf1..09c96a3 100644
+--- a/astro.config.mjs
++++ b/astro.config.mjs
+@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
+ import cloudflare from "@astrojs/cloudflare";
+ 
+ export default defineConfig({
+-  site: 'https://epoche-website.pages.dev',
++  site: 'https://epoche.blog',
+   output: "hybrid",
+   adapter: cloudflare()
+ });
+\ No newline at end of file
+diff --git a/src/content/config.ts b/src/content/config.ts
+new file mode 100644
+index 0000000..ef6004d
+--- /dev/null
++++ b/src/content/config.ts
+@@ -0,0 +1,12 @@
++import { defineCollection, z } from 'astro:content';
++
++const posts = defineCollection({
++  type: 'content',
++  schema: z.object({
++    title: z.string(),
++    date: z.date(),
++    excerpt: z.string(),
++  }),
++});
++
++export const collections = { posts };
+diff --git a/src/content/posts/welcome.md b/src/content/posts/welcome.md
+new file mode 100644
+index 0000000..04e3c8a
+--- /dev/null
++++ b/src/content/posts/welcome.md
+@@ -0,0 +1,9 @@
++---
++title: "Starting from the shop floor"
++date: 2026-09-09
++excerpt: "Why this site exists, and what epoché has to do with building things."
++---
++
++This is the first entry. More to come — replace this file, or add new ones alongside it in `src/content/posts/`, and they'll show up here automatically, newest first.
++
++To add a post: create a new `.md` file in this folder with a `title`, `date`, and `excerpt` in the frontmatter, then write the post below it in Markdown.
+diff --git a/src/layouts/Layout.astro b/src/layouts/Layout.astro
+new file mode 100644
+index 0000000..a05154e
+--- /dev/null
++++ b/src/layouts/Layout.astro
+@@ -0,0 +1,26 @@
++---
++import '../styles/global.css';
++
++interface Props {
++  title: string;
++  description?: string;
++}
++
++const { title, description = 'Epoché — writing and work by Trey.' } = Astro.props;
++---
++<html lang="en">
++  <head>
++    <meta charset="UTF-8" />
++    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
++    <meta name="description" content={description} />
++    <link rel="preconnect" href="https://fonts.googleapis.com" />
++    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
++    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
++    <title>{title}</title>
++  </head>
++  <body>
++    <div class="page-shell">
++      <slot />
++    </div>
++  </body>
++</html>
+diff --git a/src/pages/contact.astro b/src/pages/contact.astro
+index e7d7c2b..fc5098d 100644
+--- a/src/pages/contact.astro
++++ b/src/pages/contact.astro
+@@ -1,20 +1,14 @@
+ ---
+-import '../styles/global.css';
++import Layout from '../layouts/Layout.astro';
+ ---
+-<html lang="en">
+-  <head>
+-    <meta charset="UTF-8" />
+-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-    <title>Contact | Epoche</title>
+-  </head>
+-  <body>
+-    <div class="page-shell">
+-      <div class="page-note">
+-        <h1>Contact</h1>
+-        <p>This page is under construction. For now, all contact details will appear here once the site is ready.</p>
+-        <div class="construction">Under Construction</div>
+-        <a class="back-link" href="/">← Back to landing page</a>
+-      </div>
+-    </div>
+-  </body>
+-</html>
++<Layout title="Contact | Epoché">
++  <div class="sub-header">
++    <a class="crumb" href="/">← Epoché</a>
++    <h1 class="sub-title">Contact</h1>
++    <span></span>
++  </div>
++  <div class="content-area">
++    <p>Get in touch.</p>
++    <div class="construction-note">Contact details are coming soon.</div>
++  </div>
++</Layout>
+diff --git a/src/pages/index.astro b/src/pages/index.astro
+index 9bc7f1c..b2566cb 100644
+--- a/src/pages/index.astro
++++ b/src/pages/index.astro
+@@ -1,51 +1,33 @@
+ ---
+-import '../styles/global.css';
++import Layout from '../layouts/Layout.astro';
+ ---
+-<html lang="en">
+-  <head>
+-    <meta charset="UTF-8" />
+-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-    <title>Epoche — Blog & Portfolio</title>
+-  </head>
+-  <body>
+-    <div class="page-shell">
+-      <header>
+-        <p>Epoche</p>
+-        <h1>Blog & Portfolio</h1>
+-        <p>Explore the site sections below. Each page is currently under construction.</p>
+-      </header>
++<Layout title="Epoché">
++  <header class="masthead">
++    <h1 class="wordmark">Epoché</h1>
++    <p class="definition"><span class="term">epoché</span>, n. — the suspension of judgment; setting assumptions aside to look at something plainly.</p>
++  </header>
+ 
+-      <main class="triangle-scene">
+-        <div class="triangle-container" role="navigation" aria-label="Site sections">
+-          <svg viewBox="0 0 100 100" class="triangle-svg" role="img" aria-label="Explore site sections">
+-            <defs>
+-              <radialGradient id="centerGlow" cx="50%" cy="60%" r="35%">
+-                <stop offset="0%" stop-color="rgba(167, 185, 255, 0.42)" />
+-                <stop offset="100%" stop-color="rgba(167, 185, 255, 0)" />
+-              </radialGradient>
+-            </defs>
+-
+-            <circle cx="50" cy="60" r="24" fill="url(#centerGlow)" />
+-
+-            <a href="/contact" aria-label="Contact section">
+-              <path d="M50 6 L24 58 L76 58 Z" class="triangle-piece" />
+-            </a>
+-            <a href="/portfolio" aria-label="Portfolio section">
+-              <path d="M24 58 L6 96 L50 96 Z" class="triangle-piece" />
+-            </a>
+-            <a href="/philosophy" aria-label="Philosophy section">
+-              <path d="M76 58 L50 96 L94 96 Z" class="triangle-piece" />
+-            </a>
+-
+-            <path d="M50 6 L6 96 L94 96 Z" class="triangle-outline" />
+-            <path d="M50 6 L50 96 M24 58 L76 58" class="triangle-divider" />
+-
+-            <text x="50" y="34" class="triangle-label">Contact</text>
+-            <text x="25" y="80" class="triangle-label">Portfolio</text>
+-            <text x="75" y="80" class="triangle-label">Philosophy</text>
+-          </svg>
+-        </div>
+-      </main>
+-    </div>
+-  </body>
+-</html>
++  <nav class="index" aria-label="Site sections">
++    <a class="index-field" href="/philosophy">
++      <div>
++        <div class="label">Philosophy</div>
++        <p class="desc">Writing on epoché, process, and building things well.</p>
++      </div>
++      <span class="enter">Read</span>
++    </a>
++    <a class="index-field" href="/portfolio">
++      <div>
++        <div class="label">Portfolio</div>
++        <p class="desc">Manufacturing systems, automation, and builds.</p>
++      </div>
++      <span class="enter">View</span>
++    </a>
++    <a class="index-field" href="/contact">
++      <div>
++        <div class="label">Contact</div>
++        <p class="desc">Get in touch.</p>
++      </div>
++      <span class="enter">Get in touch</span>
++    </a>
++  </nav>
++</Layout>
+diff --git a/src/pages/philosophy.astro b/src/pages/philosophy.astro
+index 1b574d4..d0d4e6e 100644
+--- a/src/pages/philosophy.astro
++++ b/src/pages/philosophy.astro
+@@ -1,20 +1,36 @@
+ ---
+-import '../styles/global.css';
++import Layout from '../layouts/Layout.astro';
++import { getCollection } from 'astro:content';
++
++const posts = (await getCollection('posts')).sort(
++  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
++);
+ ---
+-<html lang="en">
+-  <head>
+-    <meta charset="UTF-8" />
+-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-    <title>Philosophy | Epoche</title>
+-  </head>
+-  <body>
+-    <div class="page-shell">
+-      <div class="page-note">
+-        <h1>Philosophy</h1>
+-        <p>This page is under construction. Your philosophy and design thinking will be published here soon.</p>
+-        <div class="construction">Under Construction</div>
+-        <a class="back-link" href="/">← Back to landing page</a>
++<Layout title="Philosophy | Epoché">
++  <div class="sub-header">
++    <a class="crumb" href="/">← Epoché</a>
++    <h1 class="sub-title">Philosophy</h1>
++    <span></span>
++  </div>
++  <div class="content-area">
++    <p>Writing on epoché as a practice — bracketing assumptions to look at process, tools, and work plainly.</p>
++
++    {posts.length > 0 ? (
++      <div class="post-list">
++        {posts.map((post) => (
++          <a class="post-entry" href={`/philosophy/${post.slug}`}>
++            <time datetime={post.data.date.toISOString()}>
++              {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
++            </time>
++            <div>
++              <div class="post-title">{post.data.title}</div>
++              <p class="excerpt">{post.data.excerpt}</p>
++            </div>
++          </a>
++        ))}
+       </div>
+-    </div>
+-  </body>
+-</html>
++    ) : (
++      <div class="construction-note">No posts yet. First one is coming soon.</div>
++    )}
++  </div>
++</Layout>
+diff --git a/src/pages/philosophy/[slug].astro b/src/pages/philosophy/[slug].astro
+new file mode 100644
+index 0000000..420c020
+--- /dev/null
++++ b/src/pages/philosophy/[slug].astro
+@@ -0,0 +1,31 @@
++---
++import Layout from '../../layouts/Layout.astro';
++import { getCollection } from 'astro:content';
++
++export async function getStaticPaths() {
++  const posts = await getCollection('posts');
++  return posts.map((post) => ({
++    params: { slug: post.slug },
++    props: { post },
++  }));
++}
++
++const { post } = Astro.props;
++const { Content } = await post.render();
++---
++<Layout title={`${post.data.title} | Epoché`} description={post.data.excerpt}>
++  <div class="sub-header">
++    <a class="crumb" href="/philosophy">← Philosophy</a>
++    <span></span>
++    <span></span>
++  </div>
++  <div class="content-area">
++    <h1 class="sub-title">{post.data.title}</h1>
++    <p class="post-meta">
++      {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
++    </p>
++    <div class="post-body">
++      <Content />
++    </div>
++  </div>
++</Layout>
+diff --git a/src/pages/portfolio.astro b/src/pages/portfolio.astro
+index 4908674..7f6c4b1 100644
+--- a/src/pages/portfolio.astro
++++ b/src/pages/portfolio.astro
+@@ -1,20 +1,14 @@
+ ---
+-import '../styles/global.css';
++import Layout from '../layouts/Layout.astro';
+ ---
+-<html lang="en">
+-  <head>
+-    <meta charset="UTF-8" />
+-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-    <title>Portfolio | Epoche</title>
+-  </head>
+-  <body>
+-    <div class="page-shell">
+-      <div class="page-note">
+-        <h1>Portfolio</h1>
+-        <p>This page is under construction. Portfolio content will be added here soon, including your projects and case studies.</p>
+-        <div class="construction">Under Construction</div>
+-        <a class="back-link" href="/">← Back to landing page</a>
+-      </div>
+-    </div>
+-  </body>
+-</html>
++<Layout title="Portfolio | Epoché">
++  <div class="sub-header">
++    <a class="crumb" href="/">← Epoché</a>
++    <h1 class="sub-title">Portfolio</h1>
++    <span></span>
++  </div>
++  <div class="content-area">
++    <p>Manufacturing systems, automation builds, and production work.</p>
++    <div class="construction-note">Under construction. Project write-ups are coming soon.</div>
++  </div>
++</Layout>
+diff --git a/src/styles/global.css b/src/styles/global.css
+index 59f3e8b..ed0fc34 100644
+--- a/src/styles/global.css
++++ b/src/styles/global.css
+@@ -1,10 +1,16 @@
+ :root {
+-  color-scheme: dark;
+-  color: #edf4ff;
+-  background: #020714;
+-  font-family: 'Segoe Script', 'Lucida Handwriting', 'Bradley Hand', cursive, sans-serif;
+-  line-height: 1.6;
+-  font-feature-settings: 'salt' 1, 'calt' 1;
++  --paper: #ECE7DC;
++  --paper-dim: #DED6C4;
++  --ink: #201D18;
++  --ink-soft: #4A443B;
++  --line: #A79C87;
++  --accent: #4B5A45;
++
++  color-scheme: light;
++  color: var(--ink);
++  background: var(--paper);
++  font-family: 'IBM Plex Sans', system-ui, sans-serif;
++  line-height: 1.55;
+ }
+ 
+ * {
+@@ -13,16 +19,13 @@
+ 
+ html,
+ body {
+-  padding: 0;
+   margin: 0;
++  padding: 0;
+   min-height: 100%;
+ }
+ 
+ body {
+-  background: radial-gradient(circle at 20% 18%, rgba(107, 146, 255, 0.16), transparent 18%),
+-    radial-gradient(circle at 80% 18%, rgba(169, 148, 255, 0.14), transparent 20%),
+-    radial-gradient(circle at 50% 50%, rgba(79, 102, 203, 0.12), transparent 30%),
+-    linear-gradient(180deg, #05102a 0%, #02050f 100%);
++  background: var(--paper);
+ }
+ 
+ a {
+@@ -30,163 +33,208 @@ a {
+   text-decoration: none;
+ }
+ 
+-.page-shell {
+-  position: relative;
+-  height: 100vh;
+-  width: 100%;
+-  overflow: hidden;
+-}
+-
+-header {
+-  position: absolute;
+-  inset: 1rem 0 auto auto;
+-  width: min(720px, calc(100% - 3rem));
+-  margin: 0 auto;
+-  left: 50%;
+-  transform: translateX(-50%);
+-  text-align: center;
+-  padding: 0.85rem 1.25rem;
+-  backdrop-filter: blur(10px);
+-  background: rgba(2, 7, 20, 0.44);
+-  border: 1px solid rgba(255, 255, 255, 0.07);
+-  border-radius: 1.5rem;
+-}
+-
+-header p {
++h1, h2, h3 {
++  font-family: Georgia, 'Iowan Old Style', serif;
++  font-weight: 500;
++  letter-spacing: -0.01em;
+   margin: 0;
+-  color: #acc5ff;
+-  letter-spacing: 0.14em;
+-  text-transform: uppercase;
+-  font-size: 0.82rem;
+ }
+ 
+-header h1 {
+-  margin: 0.75rem auto 0.5rem;
+-  font-size: clamp(2.4rem, 5vw, 4rem);
+-  letter-spacing: -0.04em;
++.page-shell {
++  min-height: 100vh;
++  display: flex;
++  flex-direction: column;
+ }
+ 
+-header p + p {
++/* ---- Landing page ---- */
++
++.masthead {
++  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.5rem, 5vw, 3.5rem) clamp(2rem, 4vw, 3rem);
++  border-bottom: 1px solid var(--line);
++}
++
++.wordmark {
++  font-size: clamp(3rem, 9vw, 5.5rem);
++  line-height: 0.95;
++}
++
++.definition {
+   margin-top: 1rem;
+-  max-width: 760px;
+-  margin-left: auto;
+-  margin-right: auto;
+-  color: #c9d6ef;
+-  opacity: 0.9;
++  max-width: 46ch;
++  color: var(--ink-soft);
++  font-size: 1.05rem;
+ }
+ 
+-.triangle-scene {
+-  min-height: 100vh;
++.definition .term {
++  font-style: italic;
++}
++
++.index {
++  flex: 1;
+   display: flex;
+-  justify-content: center;
+-  align-items: center;
+-  padding: 0;
++  flex-wrap: wrap;
++}
++
++.index-field {
++  flex: 1 1 260px;
++  min-width: 260px;
++  border-right: 1px solid var(--line);
++  padding: clamp(2rem, 5vw, 3.5rem) clamp(1.5rem, 4vw, 2.5rem);
++  display: flex;
++  flex-direction: column;
++  justify-content: space-between;
++  transition: background-color 0.2s ease;
+ }
+ 
+-.triangle-container {
+-  width: min(92vw, 92vh, 900px);
+-  max-width: 920px;
+-  aspect-ratio: 1 / 1;
+-  position: relative;
++.index-field:last-child {
++  border-right: none;
+ }
+ 
+-.triangle-svg {
+-  width: 100%;
+-  height: 100%;
+-  display: block;
+-  filter: drop-shadow(0 32px 80px rgba(25, 40, 90, 0.24));
++.index-field:hover,
++.index-field:focus-within {
++  background: var(--paper-dim);
+ }
+ 
+-.triangle-piece {
+-  fill: rgba(102, 129, 255, 0.14);
+-  stroke: rgba(0, 0, 0, 0.96);
+-  stroke-width: 1.4;
+-  cursor: pointer;
+-  transition: fill 0.28s ease, transform 0.28s ease;
++.index-field .label {
++  font-family: Georgia, 'Iowan Old Style', serif;
++  font-size: 1.6rem;
+ }
+ 
+-.triangle-piece:hover,
+-.triangle-piece:focus {
+-  fill: rgba(141, 165, 255, 0.28);
+-  transform: translateY(-0.3px);
++.index-field .desc {
++  margin-top: 0.6rem;
++  color: var(--ink-soft);
++  font-size: 0.95rem;
++  max-width: 32ch;
+ }
+ 
+-.triangle-outline,
+-.triangle-divider {
+-  fill: none;
+-  stroke: #000;
+-  stroke-width: 1.6;
+-  stroke-linejoin: round;
++.index-field .enter {
++  margin-top: 2rem;
++  font-size: 0.9rem;
++  color: var(--accent);
++  border-bottom: 1px solid var(--accent);
++  align-self: flex-start;
++  padding-bottom: 0.1rem;
+ }
+ 
+-.triangle-divider {
+-  stroke-linecap: round;
++.index-field:hover .enter,
++.index-field:focus-within .enter {
++  border-bottom-width: 2px;
+ }
+ 
+-.triangle-label {
+-  font: 700 5.8px 'Segoe Script', 'Lucida Handwriting', 'Bradley Hand', cursive;
+-  fill: #edf4ff;
+-  text-anchor: middle;
+-  pointer-events: none;
+-  text-shadow: 0 0 18px rgba(206, 221, 255, 0.22);
++@media (max-width: 720px) {
++  .index {
++    flex-direction: column;
++  }
++  .index-field {
++    border-right: none;
++    border-bottom: 1px solid var(--line);
++  }
++  .index-field:last-child {
++    border-bottom: none;
++  }
+ }
+ 
+-.triangle-links {
+-  display: none;
++/* ---- Sub-pages ---- */
++
++.sub-header {
++  padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.5rem, 5vw, 3.5rem) 1.25rem;
++  border-bottom: 1px solid var(--line);
++  display: flex;
++  align-items: baseline;
++  justify-content: space-between;
++  gap: 1rem;
++  flex-wrap: wrap;
+ }
+ 
+-.construction {
+-  margin-top: 1.4rem;
+-  padding: 1rem 1.25rem;
+-  border: 2px dashed rgba(255, 255, 255, 0.45);
+-  border-radius: 1rem;
+-  background: rgba(255, 255, 255, 0.06);
+-  color: #f6f8ff;
+-  font-weight: 600;
+-  letter-spacing: 0.02em;
++.sub-header .crumb {
++  color: var(--ink-soft);
++  font-size: 0.95rem;
+ }
+ 
+-.page-note {
+-  margin: 2rem auto 0;
+-  padding: 2rem;
++.sub-header .crumb:hover {
++  color: var(--accent);
++}
++
++.sub-title {
++  font-size: clamp(2rem, 5vw, 3rem);
++}
++
++.content-area {
++  flex: 1;
++  padding: clamp(1.5rem, 5vw, 3rem) clamp(1.5rem, 5vw, 3.5rem) clamp(3rem, 6vw, 5rem);
+   max-width: 720px;
+-  border-radius: 1.5rem;
+-  background: rgba(255, 255, 255, 0.04);
+-  border: 1px solid rgba(255, 255, 255, 0.08);
+-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+ }
+ 
+-.page-note h1 {
+-  margin: 0;
+-  font-size: clamp(2rem, 4vw, 3rem);
++.content-area > p {
++  color: var(--ink-soft);
++  max-width: 62ch;
+ }
+ 
+-.page-note p {
+-  margin: 1rem 0 0;
+-  color: #cbd6f0;
++.construction-note {
++  margin-top: 1.5rem;
++  padding: 1rem 1.25rem;
++  border: 1px solid var(--line);
++  color: var(--ink-soft);
++  font-size: 0.92rem;
+ }
+ 
+-.back-link {
+-  display: inline-flex;
+-  align-items: center;
+-  gap: 0.5rem;
+-  margin-top: 1.8rem;
+-  color: #d7e9ff;
+-  font-weight: 600;
++/* ---- Post list ---- */
++
++.post-list {
++  margin-top: 2rem;
++  border-top: 1px solid var(--line);
+ }
+ 
+-@media (max-width: 760px) {
+-  .triangle-container {
+-    width: min(92vw, 320px);
+-  }
++.post-entry {
++  display: flex;
++  gap: 1.5rem;
++  padding: 1.4rem 0;
++  border-bottom: 1px solid var(--line);
++}
+ 
+-  .triangle-label {
+-    font-size: 3px;
+-  }
++.post-entry time {
++  flex: 0 0 auto;
++  color: var(--ink-soft);
++  font-size: 0.9rem;
++  padding-top: 0.2rem;
++  min-width: 6.5rem;
++}
+ 
+-  .triangle-links {
+-    grid-template-columns: repeat(3, minmax(0, 1fr));
+-    align-items: flex-start;
+-    padding-top: 0.5rem;
++.post-entry .post-title {
++  font-family: Georgia, 'Iowan Old Style', serif;
++  font-size: 1.3rem;
++}
++
++.post-entry:hover .post-title {
++  color: var(--accent);
++}
++
++.post-entry .excerpt {
++  margin-top: 0.35rem;
++  color: var(--ink-soft);
++  font-size: 0.95rem;
++}
++
++@media (max-width: 560px) {
++  .post-entry {
++    flex-direction: column;
++    gap: 0.3rem;
+   }
+ }
++
++/* ---- Post body ---- */
++
++.post-body {
++  margin-top: 1.5rem;
++  max-width: 62ch;
++}
++
++.post-body p {
++  color: var(--ink-soft);
++}
++
++.post-meta {
++  color: var(--ink-soft);
++  font-size: 0.9rem;
++  margin-top: 0.75rem;
++}
